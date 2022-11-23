@@ -2,7 +2,7 @@ step 1
 
 for kubernets we need to install aws cli 
 
-for install aws cli in linux --------   go to google --- search aws cli install in linux
+for install aws cli in linux --------   go to google --- search aws cli install in linux -- "https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html"
 
 copy the code and paste in linux the code is 
 
