@@ -1,0 +1,152 @@
+step 1
+
+for kubernets we need to install aws cli 
+
+for install aws cli in linux --------   go to google --- search aws cli install in linux
+
+copy the code and paste in linux the code is 
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install 
+
+2)  vim .bashrc
+
+below fi type 
+
+export PATH=$PATH:/usr/local/bin/
+exit 
+
+3) source .bashrc
+
+4) aws --version
+
+step 2
+
+Now install kubectl 
+
+for install kubectl code link is 
+
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+for download kops link 
+
+wget https://github.com/kubernetes/kops/releases/download/v1.24.1/kops-linux-amd64
+
+then give execute permissions to kubctl and kcops
+
+chmod +x kops-linux-amd64 kubectl
+
+mv kubectl /usr/local/bin/kubectl
+mv kops-linux-amd64 /usr/local/bin/kops
+
+kubectl version
+kops version
+----------------
+create user 
+
+type aws configure        // in linux type aws configure
+
+access id 
+secret key 
+default region :  give region   // us-east-1
+default output format :  table
+
+create bucker using command 
+
+aws s3api create-bucket --bucket rahams.k8s.local --region us-east-1
+
+after create bucker enable versioning to bucker
+
+aws s3api put-bucket-versioning --bucket rahams.k8s.local --region us-east-1 --versioning-configuration Status=Enabled
+
+export the data in cluster to s3 bucker
+
+export KOPS_STATE_STORE=s3://rahams.k8s.local
+
+create a cluster
+
+kops create cluster --name rahams.k8s.local --zones us-east-1a --master-size t2.medium --node-size t2.micro
+
+to check the cluster 
+
+kops get cluster
+
+if you want to edit the cluster 
+
+kops edit cluster rahams.k8s.local
+
+after edit update the cluster
+
+kops update cluster rahams.k8s.local
+kops update cluster --name rahams.k8s.local --yes --admin
+
+when cluster is starting message is shown cluster cration is run sucess
+
+when you want to show the nodes type
+
+kubectl get nodes
+ ---------------------------------------
+create pods in kubernets
+
+1) check is there any pods are there  command is ---   kubectl get pod or kubectl get po
+
+create the pod :
+ 
+           kubectl run nginx --image nginx    //  nginx is a pod name  we need to give image to create pod so --image nginx here --image nginx is a image name 
+
+TO know where the pod is running  ----   kubectl get pod -o wide
+
+delete the pod
+
+kubectl delete pod nginx(podname)
+
+we can create pod using yaml 
+
+vim abc.yml
+
+apiVersion: v1
+kind: Pod              // in kind : first letter is capital "Pod"
+metadate:
+   name: nginx
+spec:
+  containers:
+    - image: nginx
+      name:  nginx
+:wq
+mv abc.yml pod-nginx.yml
+
+kubectl create -f pod-nginx.yml
+
+---------------
+deployment 
+
+apiVersion: apps/v1
+kind: Depolyment
+metadata:
+  labels:
+     run: nignx
+   name: nginx-deploy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      run: nginx
+   template:
+     metadata:
+       labels:
+         run: nginx
+        spec:
+          containers:
+          - images: nginx
+             name: nginx
+
+
+
+delete the cluster 
+
+kops delete cluster --name raham.k8s.local --yes 
+
+
+
+
